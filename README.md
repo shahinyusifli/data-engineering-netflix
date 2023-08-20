@@ -99,8 +99,8 @@ Result:
 - d. A report showing the popularity of Movies and Series in different customer segments and the device used to consume, across the different markets the company operates in.
  Query:
 
-   ``` sql
- SELECT
+``` sql
+SELECT
     cd.country "Country",
     gd.gender "Gender",
     dd.device "Device",
@@ -119,6 +119,6 @@ JOIN
 GROUP BY
     cd.country, gd.gender, dd.device
 ORDER BY
-    cd.country, gd.gender, dd.device;
+    cd.country, gd.gender, dd.device; 
 ```
 Result: Result can be find in "Results_of_query_3_and_4" folder 
