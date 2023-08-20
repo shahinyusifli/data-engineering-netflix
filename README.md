@@ -60,7 +60,7 @@ GROUP BY
     cd.country
 ORDER BY
     "Profit" DESC
-LIMIT 1;
+limit 1;
 ```
 Result:
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/result_of_first_task.png)
@@ -96,6 +96,27 @@ Result:
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/result_of_second_task.png)
 - c. Which country has the potential for improving earnings if Netflix starts charging subscribers an additional fee for sharing Netflix households outside of their own?
  Query:
+ ``` sql
+ SELECT
+    cd.country as "Country",
+    SUM(CASE WHEN ud.householdprofileind >= 1 THEN sd.revenue ELSE 0 END) as "Proift of more than 1 household" ,
+    SUM(CASE WHEN ud.householdprofileind = 1 THEN sd.revenue ELSE 0 END) as "Proift of 1 household",
+     SUM(CASE WHEN ud.householdprofileind >= 1 THEN sd.revenue ELSE 0 END) * 2 as "Earnable profit"
+FROM
+    public.salesfact sf
+JOIN
+    public.countrydimension cd ON sf.country_id = cd.id
+JOIN
+    public.userdimension ud ON sf.userid = ud.userid
+JOIN
+    public.subscriptiondimension sd ON sf.subscriptionid  = sd.id
+GROUP BY
+    cd.country
+ORDER by "Earnable profit" desc  
+limit 1;
+ ```
+ Result:
+ ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/ result_of_third_task.png)
 - d. A report showing the popularity of Movies and Series in different customer segments and the device used to consume, across the different markets the company operates in.
  Query:
 
@@ -104,8 +125,8 @@ SELECT
     cd.country "Country",
     gd.gender "Gender",
     dd.device "Device",
-    SUM(ud.movieswatched) "Number of watched movies",
-    SUM(ud.serieswatched) "Number of watched series"
+    sum(ud.movieswatched) "Number of watched movies",
+    sum(ud.serieswatched) "Number of watched series"
 FROM
     public.countrydimension cd
 JOIN
