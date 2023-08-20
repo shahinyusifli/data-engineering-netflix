@@ -85,4 +85,4 @@ task_detect_anomalies = PythonOperator(
 )
 
 # Define task dependencies
-task_extract_data >> detect_anomalies >> task_load_devices_to_dim
+task_extract_data >> task_detect_anomalies >> task_load_devices_to_dim

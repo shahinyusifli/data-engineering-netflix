@@ -32,15 +32,13 @@ default_args = {
 dag = DAG(
     'populate_time_dimension',
     default_args=default_args,
-    schedule_interval=timedelta(days=1),  # Run daily
-    catchup=False  # Do not backfill for past dates
+    schedule_interval=timedelta(days=1),
+    catchup=False 
 )
 
 def populate_time_dimension():
-    conn = psycopg2.connect(**postgres_conn)
     cur = conn.cursor()
     
-    # Your PostgreSQL query here
     query = """-- Generate a series of dates from 2021-01-01 to 2024-12-31
 INSERT INTO datedimension (ID, Day, Month, MonthName, Year, Quarter, Weekday, DayOfWeekName, IsWeekend)
 SELECT 
@@ -64,17 +62,13 @@ FROM generate_series(
     cur.close()
     conn.close()
 
-# Define the PythonOperator to execute the task
+
 populate_time_dimension_task = PythonOperator(
     task_id='populate_time_dimension',
     python_callable=populate_time_dimension,
     dag=dag
 )
 
-# Set task dependencies
+
 populate_time_dimension_task
 
-# If there are other tasks to run after populating the TimeDimension table, add them here
-# task_after_populating = ...
-
-# populate_time_dimension_task >> task_after_populating
