@@ -34,7 +34,7 @@ I have selected PostgreSQL, Airflow, and Python to accomplish this task. Postgre
 
 ### Task 3
 What control measures could be deployed here to ensure the correctness of data? Do you notice something odd about the dataset provided?
-### Answer 
+### Solutions 
 There are some control measures that can be used for the correctness of data
 - Control measure for "Plan Duration": As I mentioned "Plan Duration" can violate the first normal form. Therefore, it is transformed into subscription_pipeline.
 - Control measure for "Ages": There are some outlined data such as 107 and 904 in the "Ages" column of the dataset. 107 can be acceptable but 904 is not. Therefore, rows are deleted if the age is more than 110. This transformation is done in user_pipeline and fact_sales_pipeline.
@@ -63,6 +63,7 @@ ORDER BY
 limit 1;
 ```
 Result:
+
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/result_of_first_task.png)
 - b. The most popular packages per country.
  Query:
@@ -93,6 +94,7 @@ WHERE
     );
 ```
 Result: 
+
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/result_of_second_task.png)
 - c. Which country has the potential for improving earnings if Netflix starts charging subscribers an additional fee for sharing Netflix households outside of their own?
  Query:
@@ -116,7 +118,8 @@ ORDER by "Earnable profit" desc
 limit 1;
  ```
  Result:
- ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/ result_of_third_task.png)
+
+ ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/result_of_third_task.png)
 - d. A report showing the popularity of Movies and Series in different customer segments and the device used to consume, across the different markets the company operates in.
  Query:
 
