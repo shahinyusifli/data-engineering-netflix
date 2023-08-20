@@ -92,11 +92,13 @@ WHERE
         SELECT MAX("Total revenue") FROM SubscriptionRevenue WHERE country_id = sr.country_id
     );
 ```
-Results: ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/result_of_second_task.png)
+Result: 
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/result_of_second_task.png)
 - c. Which country has the potential for improving earnings if Netflix starts charging subscribers an additional fee for sharing Netflix households outside of their own?
  Query:
 - d. A report showing the popularity of Movies and Series in different customer segments and the device used to consume, across the different markets the company operates in.
  Query:
+ 
   ``` sql
  SELECT
     cd.country "Country",
@@ -119,4 +121,4 @@ GROUP BY
 ORDER BY
     cd.country, gd.gender, dd.device;
  ```
-Results: Result can be find in "Results_of_query_3_and_4" folder 
+Result: Result can be find in "Results_of_query_3_and_4" folder 
