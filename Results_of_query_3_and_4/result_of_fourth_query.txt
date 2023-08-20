@@ -1,0 +1,81 @@
+Australia	Female	Laptop	119	63
+Australia	Female	Smart TV	68	29
+Australia	Female	Smartphone	152	70
+Australia	Female	Tablet	136	49
+Australia	Male	Laptop	117	50
+Australia	Male	Smart TV	133	55
+Australia	Male	Smartphone	166	59
+Australia	Male	Tablet	124	56
+Brazil	Female	Laptop	127	70
+Brazil	Female	Smart TV	75	35
+Brazil	Female	Smartphone	188	73
+Brazil	Female	Tablet	126	76
+Brazil	Male	Laptop	128	47
+Brazil	Male	Smart TV	142	49
+Brazil	Male	Smartphone	147	74
+Brazil	Male	Tablet	102	48
+Canada	Female	Laptop	185	84
+Canada	Female	Smart TV	194	99
+Canada	Female	Smartphone	189	83
+Canada	Female	Tablet	255	119
+Canada	Male	Laptop	154	64
+Canada	Male	Smart TV	233	106
+Canada	Male	Smartphone	254	112
+Canada	Male	Tablet	226	100
+France	Female	Laptop	172	71
+France	Female	Smart TV	132	64
+France	Female	Smartphone	155	59
+France	Female	Tablet	58	31
+France	Male	Laptop	139	56
+France	Male	Smart TV	121	45
+France	Male	Smartphone	129	50
+France	Male	Tablet	149	66
+Germany	Female	Laptop	127	49
+Germany	Female	Smart TV	149	65
+Germany	Female	Smartphone	107	38
+Germany	Female	Tablet	119	69
+Germany	Male	Laptop	168	100
+Germany	Male	Smart TV	74	36
+Germany	Male	Smartphone	111	41
+Germany	Male	Tablet	107	47
+Italy	Female	Laptop	104	53
+Italy	Female	Smart TV	172	87
+Italy	Female	Smartphone	77	56
+Italy	Female	Tablet	131	54
+Italy	Male	Laptop	180	72
+Italy	Male	Smart TV	95	39
+Italy	Male	Smartphone	131	74
+Italy	Male	Tablet	127	48
+Mexico	Female	Laptop	126	64
+Mexico	Female	Smart TV	112	58
+Mexico	Female	Smartphone	117	45
+Mexico	Female	Tablet	121	55
+Mexico	Male	Laptop	145	51
+Country Gender Device Number of watched movies Number of watched series
+Mexico	Male	Smart TV	117	42
+Mexico	Male	Smartphone	126	53
+Mexico	Male	Tablet	167	62
+Spain	Female	Laptop	295	146
+Spain	Female	Smart TV	347	178
+Spain	Female	Smartphone	295	132
+Spain	Female	Tablet	366	166
+Spain	Male	Laptop	284	123
+Spain	Male	Smart TV	362	164
+Spain	Male	Smartphone	256	137
+Spain	Male	Tablet	317	127
+United Kingdom	Female	Laptop	153	59
+United Kingdom	Female	Smart TV	85	37
+United Kingdom	Female	Smartphone	125	63
+United Kingdom	Female	Tablet	129	66
+United Kingdom	Male	Laptop	117	55
+United Kingdom	Male	Smart TV	134	61
+United Kingdom	Male	Smartphone	160	70
+United Kingdom	Male	Tablet	97	39
+United States	Female	Laptop	378	176
+United States	Female	Smart TV	357	152
+United States	Female	Smartphone	245	119
+United States	Female	Tablet	340	104
+United States	Male	Laptop	278	132
+United States	Male	Smart TV	318	131
+United States	Male	Smartphone	282	129
+United States	Male	Tablet	390	155

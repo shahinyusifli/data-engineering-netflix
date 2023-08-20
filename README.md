@@ -25,7 +25,7 @@ I have selected PostgreSQL, Airflow, and Python to accomplish this task. Postgre
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/sales_fact_table_pipeline.png)
 - gender_pipeline: Extract and Load gender variables from the Gender column of the dataset to the Gender Dimension of the data warehouse.
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/genders_pipeline.png)
-- populate_time_dimension:
+- populate_time_dimension: This pipeline consists of one task which is responsible for generating a calendar table in 2 years range. Also, common table expression (CTE) is used to define the start and end dates for the range.
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/calendar_pipeline.png)
 - subscription_pipeline: Extract and Load variables from the Subscription Type, Revenue, and Plan Duration columns of the dataset to the Subscription Dimension of the data warehouse.
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/subscription_pipeline.png)
@@ -38,16 +38,85 @@ What control measures could be deployed here to ensure the correctness of data? 
 There are some control measures that can be used for the correctness of data
 - Control measure for "Plan Duration": As I mentioned "Plan Duration" can violate the first normal form. Therefore, it is transformed into subscription_pipeline.
 - Control measure for "Ages": There are some outlined data such as 107 and 904 in the "Ages" column of the dataset. 107 can be acceptable but 904 is not. Therefore, rows are deleted if the age is more than 110. This transformation is done in user_pipeline and fact_sales_pipeline.
-There is some anomaly in the dataset. I think each type of subscription should have a different Revenue value but it is listed from 10 to 15. It may happen during the generation of data.
+- Control measure for pipelines: I have applied detecting anomalies in some dimension tables which can check predefined values in json files. It can help detect outliers in categorical data.
 
+There is some anomaly in the dataset. I think each type of subscription should have a constant Revenue values but range of Revenue values are listed from 10 to 15 for each subscription. It may happen during the generation of data.
 
 ### Task 4
 Write queries for answering the following questions:
 - a.The most profitable country for Netflix.
  Query:
+ ```sql
+SELECT
+    cd.country "Country",
+    SUM(sd.revenue) "Profit"
+FROM
+    public.countrydimension cd
+JOIN
+    public.salesfact sf ON cd.id = sf.country_id
+JOIN
+    public.subscriptiondimension sd ON sf.subscriptionid = sd.id
+GROUP BY
+    cd.country
+ORDER BY
+    "Profit" DESC
+LIMIT 1;
+```
+Result:
+![alt text]()
 - b. The most popular packages per country.
  Query:
+ ``` sql
+ WITH SubscriptionRevenue AS (
+    SELECT
+        sf.country_id,
+        sd.subscription AS "Subscription type",
+        SUM(sd.revenue) AS "Total revenue"
+    FROM
+        public.salesfact sf
+    JOIN
+        public.subscriptiondimension sd ON sf.subscriptionid = sd.id
+    GROUP BY
+        sf.country_id, sd.subscription
+)
+SELECT
+    cd.country,
+    sr."Subscription type",
+    sr."Total revenue"
+FROM
+    public.countrydimension cd
+JOIN
+    SubscriptionRevenue sr ON cd.id = sr.country_id
+WHERE
+    sr."Total revenue" = (
+        SELECT MAX("Total revenue") FROM SubscriptionRevenue WHERE country_id = sr.country_id
+    );
+
+ ```
 - c. Which country has the potential for improving earnings if Netflix starts charging subscribers an additional fee for sharing Netflix households outside of their own?
  Query:
 - d. A report showing the popularity of Movies and Series in different customer segments and the device used to consume, across the different markets the company operates in.
  Query:
+  ``` sql
+ SELECT
+    cd.country "Country",
+    gd.gender "Gender",
+    dd.device "Device",
+    SUM(ud.movieswatched) "Number of watched movies",
+    SUM(ud.serieswatched) "Number of watched series"
+FROM
+    public.countrydimension cd
+JOIN
+    public.salesfact sf ON cd.id = sf.country_id
+JOIN
+    public.userdimension ud ON sf.userid = ud.userid
+JOIN
+    public.genderdimension gd ON ud.gender_id = gd.id
+JOIN
+    public.devicedimension dd ON sf.device_id = dd.id
+GROUP BY
+    cd.country, gd.gender, dd.device
+ORDER BY
+    cd.country, gd.gender, dd.device;
+ ```
+Results: Result can be find in "Results_of_query_3_and_4" folder 
