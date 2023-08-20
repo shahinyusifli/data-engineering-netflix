@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE TABLE public.countrydimension (
 	id serial4 NOT NULL,
 	country varchar(100) NULL,
@@ -18,6 +20,7 @@ CREATE TABLE public.datedimension (
 	CONSTRAINT datedimension_pkey PRIMARY KEY (id)
 );
 
+
 CREATE TABLE public.devicedimension (
 	id serial4 NOT NULL,
 	device varchar(50) NULL,
@@ -31,36 +34,6 @@ CREATE TABLE public.genderdimension (
 	CONSTRAINT genderdimension_pkey PRIMARY KEY (id)
 );
 
--- public.salesfact definition
-
--- Drop table
-
--- DROP TABLE public.salesfact;
-
-CREATE TABLE public.salesfact (
-	salesid serial4 NOT NULL,
-	userid int4 NULL,
-	subscriptionid int4 NULL,
-	last_payment_date date NULL,
-	country_id int4 NULL,
-	device_id int4 NULL,
-	CONSTRAINT salesfact_pkey PRIMARY KEY (salesid)
-);
-
-
--- public.salesfact foreign keys
-
-ALTER TABLE public.salesfact ADD CONSTRAINT fk_country FOREIGN KEY (country_id) REFERENCES public.countrydimension(id);
-ALTER TABLE public.salesfact ADD CONSTRAINT fk_date FOREIGN KEY (last_payment_date) REFERENCES public.datedimension(id);
-ALTER TABLE public.salesfact ADD CONSTRAINT fk_device FOREIGN KEY (device_id) REFERENCES public.devicedimension(id);
-ALTER TABLE public.salesfact ADD CONSTRAINT fk_subscription FOREIGN KEY (subscriptionid) REFERENCES public.subscriptiondimension(id);
-ALTER TABLE public.salesfact ADD CONSTRAINT fk_user FOREIGN KEY (userid) REFERENCES public.userdimension(userid);
-
--- public.subscriptiondimension definition
-
--- Drop table
-
--- DROP TABLE public.subscriptiondimension;
 
 CREATE TABLE public.subscriptiondimension (
 	id serial4 NOT NULL,
@@ -70,11 +43,6 @@ CREATE TABLE public.subscriptiondimension (
 	CONSTRAINT subscriptiondimension_pkey PRIMARY KEY (id)
 );
 
--- public.userdimension definition
-
--- Drop table
-
--- DROP TABLE public.userdimension;
 
 CREATE TABLE public.userdimension (
 	userid serial4 NOT NULL,
@@ -87,8 +55,22 @@ CREATE TABLE public.userdimension (
 	gender_id int4 NULL,
 	CONSTRAINT userdimension_pkey PRIMARY KEY (userid)
 );
-
-
--- public.userdimension foreign keys
-
 ALTER TABLE public.userdimension ADD CONSTRAINT fk_gender FOREIGN KEY (gender_id) REFERENCES public.genderdimension(id);
+
+
+CREATE TABLE public.salesfact (
+	salesid serial4 NOT NULL,
+	userid int4 NULL,
+	subscriptionid int4 NULL,
+	last_payment_date date NULL,
+	country_id int4 NULL,
+	device_id int4 NULL,
+	CONSTRAINT salesfact_pkey PRIMARY KEY (salesid)
+);
+ALTER TABLE public.salesfact ADD CONSTRAINT fk_country FOREIGN KEY (country_id) REFERENCES public.countrydimension(id);
+ALTER TABLE public.salesfact ADD CONSTRAINT fk_date FOREIGN KEY (last_payment_date) REFERENCES public.datedimension(id);
+ALTER TABLE public.salesfact ADD CONSTRAINT fk_device FOREIGN KEY (device_id) REFERENCES public.devicedimension(id);
+ALTER TABLE public.salesfact ADD CONSTRAINT fk_subscription FOREIGN KEY (subscriptionid) REFERENCES public.subscriptiondimension(id);
+ALTER TABLE public.salesfact ADD CONSTRAINT fk_user FOREIGN KEY (userid) REFERENCES public.userdimension(userid);
+
+COMMIT;
