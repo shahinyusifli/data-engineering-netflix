@@ -1,10 +1,16 @@
 # data-engineering-netflix
  I've developed a data engineering solution for Inbank's take-home task. I designed normalized data model for efficient data warehousing. In addition, I created ETL pipelines using Airflow to handle data flow into a PostgreSQL data warehouse. Furthermore, I formulated and executed SQL queries to fulfill the specific reporting requirements.
-## Installation
-Clone the repo from github by running:
+## Run and Installation in local
+Clone the repo from GitHub by running:
 ```
  $ git clone https://github.com/shahinyusifli/data-engineering-netflix.git
 ```
+Start the Docker container in detached mode inside the project folder
+```
+ $ docker-compose up -d  
+```
+Create a "netflix_dw" database and create tables with queries inside the SQL folder. After creating the database and tables, some credentials which are dbname, user, password, host, and port should be defined. They should be used for creating connections in Admin panel in the Airflow menu
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/connection.png)
 
 ## Tasks and solutions
 ### Task 1
