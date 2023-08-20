@@ -3,7 +3,6 @@ from airflow.operators.python_operator import PythonOperator
 from datetime import datetime
 import pandas as pd
 import psycopg2
-import json
 from airflow.hooks.base_hook import BaseHook
 
 conn_id = 'postgres_localhost'
