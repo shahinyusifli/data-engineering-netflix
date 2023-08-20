@@ -29,14 +29,12 @@ conn = psycopg2.connect(**conn_params)
 def extract_data():
     csv_filepath = '/opt/airflow/dags/Netflix_dataset.csv'
     df = pd.read_csv(csv_filepath, sep=";")
-   
     return df
 
 def delete_outlier_age():
     df = extract_data()
     outlier_age_free_df = df[df['Age'] <= 110]
     return outlier_age_free_df
-
 
 def format_join_date():
     df = delete_outlier_age()
@@ -46,14 +44,11 @@ def format_join_date():
 
 def format_genders():
     df = delete_outlier_age()
-
     cur = conn.cursor()
-
     query = "select id, gender from genderdimension"
     cur.execute(query)
     genders_dict = {row[1]: row[0] for row in cur.fetchall()}
     formated_gender = df['Gender'].map(genders_dict).tolist()
-
     return formated_gender
 
 def load_users_to_dim():
@@ -61,26 +56,19 @@ def load_users_to_dim():
     df["Join Date"] = format_join_date()
     df["Gender_ID"] = format_genders()
     df.columns = df.columns.str.strip()
-
-
     cur = conn.cursor()
-
     for index, row in df.iterrows():
         cur.execute("""INSERT INTO UserDimension (UserID, JoinDate, Age, ActiveProfiles, HouseholdProfileInd, MoviesWatched, SeriesWatched, Gender_ID) 
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""", 
                     (row['User ID'], row['Join Date'], row['Age'], row['Active Profiles'], row['Household Profile Ind'], row['Movies Watched'], row['Series Watched'], row['Gender_ID']))
     
-    
-    
     conn.commit()
     conn.close()
-
-
 
 dag = DAG(
     'user_pipeline',
     default_args=default_args,
-    schedule_interval=None,  # Set the schedule interval according to your needs
+    schedule_interval=None, 
 )
 
 task_extract_data = PythonOperator(
@@ -114,6 +102,4 @@ task_load_users_to_dim = PythonOperator(
 )
 
 
-
-# Define task dependencies
-task_extract_data >> task_delete_outlier_age >> task_format_join_date >> task_format_genders >> task_load_users_to_dim
+task_extract_data >> task_delete_outlier_age >> [task_format_join_date, task_format_genders] >> task_load_users_to_dim

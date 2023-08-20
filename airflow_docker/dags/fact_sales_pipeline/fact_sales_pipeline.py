@@ -72,16 +72,10 @@ def convert_subscription(row):
     elif row['Subscription Type'] == 'Standard' and row['Monthly Revenue'] == 14:
         return 18
 
-
 def mapping_subscription():
     df = extract_data()
     df['subscriptionid'] = df.apply(convert_subscription, axis=1)
-    print("===============================================")
-    print(df['subscriptionid'].tolist())
-    print("================================================")
     return df['subscriptionid'].tolist()
-
-
 
 def format_last_payment_date():
     df = extract_data()
@@ -116,17 +110,16 @@ def mapping_device():
 
 def load_data_to_fact_table():
     df = extract_data()
-    df["subscriptionid"] = load_subscription_id()
-    df["last_payment_date"] = load_last_payment_date()
-    df['country_id'] = load_country_id()
-    df['device_id'] = load_device_id()
+    df["subscriptionid"] = mapping_subscription()
+    df["last_payment_date"] = format_last_payment_date()
+    df['country_id'] = mapping_country()
+    df['device_id'] = mapping_device()
     df.columns = df.columns.str.strip()
     df["subscriptionid"] = df["subscriptionid"].astype(int)
 
     cur = conn.cursor()
 
     for index, row in df.iterrows():
-        # Check if foreign key values exist in respective dimension tables
         subscription_exists = check_subscription_exists(row['subscriptionid']) 
         country_exists = check_country_exists(row['country_id']) 
         device_exists = check_device_exists(row['device_id'])
@@ -165,7 +158,7 @@ def check_device_exists(device_id):
 dag = DAG(
     'fact_sales_pipeline',
     default_args=default_args,
-    schedule_interval=None,  # Set the schedule interval according to your needs
+    schedule_interval=None, 
 )
 
 task_extract_data = PythonOperator(
@@ -206,6 +199,5 @@ task_load_data_to_fact_table = PythonOperator(
 
 
 
-# Define task dependencies
 task_extract_data >> [task_mapping_subscription, task_format_last_payment_date, task_mapping_country, task_mapping_device] >> task_load_data_to_fact_table 
 

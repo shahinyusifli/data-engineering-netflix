@@ -44,7 +44,6 @@ def load_subscriptions_to_dim():
     for subscription in extracted_subscription:
         for revenue in extracted_revenue:
             for plan_duration in modified_plan_duration:
-                # Convert plan_duration and revenue to Python integers
                 plan_duration_int = int(plan_duration)
                 revenue_int = int(revenue)
                 
@@ -57,12 +56,10 @@ def load_subscriptions_to_dim():
     conn.commit()
     conn.close()
 
-
-
 dag = DAG(
     'subscription_pipeline',
     default_args=default_args,
-    schedule_interval=None,  # Set the schedule interval according to your needs
+    schedule_interval=None, 
 )
 
 task_extract_data = PythonOperator(
@@ -78,5 +75,4 @@ task_load_subscriptions_to_dim = PythonOperator(
 )
 
 
-# Define task dependencies
 task_extract_data >> task_load_subscriptions_to_dim

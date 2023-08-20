@@ -10,7 +10,6 @@ I have created a normalized data model meeting the requirements of each normal f
 - Boyce Codd's normal form can be beneficial for eliminating future data inconsistency problems. We can ensure the quality of queues by implementing a super key concept. I have created new tables for the Device, Country, and Gender columns. 
 After implementing these normal forms, I have to decide to implement data warehousing concepts because queries in Task 4 look like queries for the data analytics process. I have created relevant dimensions and fact tables considering all normal forms, final schema can be found below:
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/schema_netflix_dw.png)
-Schema
 
 
 ### Task 2

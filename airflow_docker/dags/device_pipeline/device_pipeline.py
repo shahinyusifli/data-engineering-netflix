@@ -33,7 +33,7 @@ def extract_data():
    
     return df
 
-def check_quality_with_list():
+def detect_anomalies():
     df = extract_data()
     extracted_devices = df['Device'].unique()
     with open('/opt/airflow/dags/device_pipeline/devices.json', 'r') as file:
@@ -63,7 +63,7 @@ def load_devices_to_dim():
 dag = DAG(
     'device_pipeline',
     default_args=default_args,
-    schedule_interval=None,  # Set the schedule interval according to your needs
+    schedule_interval=None, 
 )
 
 task_extract_data = PythonOperator(
@@ -78,13 +78,11 @@ task_load_devices_to_dim = PythonOperator(
     dag=dag,
 )
 
-task_check_quality_with_list = PythonOperator(
-    task_id='check_quality_with_list',
-    python_callable=check_quality_with_list,
+task_detect_anomalies = PythonOperator(
+    task_id='detect_anomalies',
+    python_callable=detect_anomalies,
     dag=dag,
 )
 
-
-
 # Define task dependencies
-task_extract_data >> task_check_quality_with_list >> task_load_devices_to_dim
+task_extract_data >> detect_anomalies >> task_load_devices_to_dim
