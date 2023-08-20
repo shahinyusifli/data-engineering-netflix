@@ -9,7 +9,7 @@ I have created a normalized data model meeting the requirements of each normal f
 - According to the requirements of the third normal form, there should not be any transient dependency between non-key attributes. But we can notice this dependency in the description section of columns in the task pdf. Especially, we can understand the transient dependency between the "Revenue" and "Subscription Type" columns with this statement "Monthly Revenue: Fee receivable for the given subscription type". It means "Revenue" depending on the User with the User's Subscription Type. In other words, we can describe it as {User ID} → {Subscription Type} → {Revenue}. For meeting the requirements of the third normal form, I have created a new table that consists of ID, Subscription, and Revenue columns. 
 - Boyce Codd's normal form can be beneficial for eliminating future data inconsistency problems. We can ensure the quality of queues by implementing a super key concept. I have created new tables for the Device, Country, and Gender columns. 
 After implementing these normal forms, I have to decide to implement data warehousing concepts because queries in Task 4 look like queries for the data analytics process. I have created relevant dimensions and fact tables considering all normal forms, final schema can be found below:
-![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/schema_netflix_dw.png)
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/schema_netflix_dw.png)
 
 
 ### Task 2
@@ -17,13 +17,20 @@ Load the data into the data model you constructed and into DB engines like MySQL
 
 ### Solution
 I have selected PostgreSQL, Airflow, and Python to accomplish this task. PostgreSQL was selected because it has strong performance in selecting big amounts of data which is the most critical for data warehouses. Also, I have selected Airflow because I can achieve repeatable loading by using the advantages of Python. In total, I have created 7 ETL pipelines. I would like to give a short description of each of them.
-- country_pipeline: Extract and Load unique variables from the Country column of the dataset to the Country Dimension of the data warehouse
-- device_pipeline: Extract and Load unique variables from the Device column of the dataset to the Country Dimension of the data warehouse
+- country_pipeline: Extract and Load unique variables from the Country column of the dataset to the Country Dimension of the data warehouse.
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/country_pipeline.png)
+- device_pipeline: Extract and Load unique variables from the Device column of the dataset to the Country Dimension of the data warehouse.
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/device_pipeline.png)
 - fact_sales_pipeline: Extract, Transform, and Load data from User_ID, Subscription Type, Country, Device, and Last Payment Date column of the dataset to the Sales Fact table. Also, all columns are mapped to foreign keys.
-- gender_pipeline: Extract and Load gender variables from the Gender column of the dataset to the Gender Dimension of the data warehouse
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/sales_fact_table_pipeline.png)
+- gender_pipeline: Extract and Load gender variables from the Gender column of the dataset to the Gender Dimension of the data warehouse.
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/genders_pipeline.png)
 - populate_time_dimension:
-- subscription_pipeline: Extract and Load variables from the Subscription Type, Revenue, and Plan Duration columns of the dataset to the Subscription Dimension of the data warehouse
-- user_pipeline: Extract User related information such as User ID, Join Date, Country, Age, Gender, Active Profiles, Household Profile Ind, Movies Watched, Series Watched to User Dimension. Also, Gender data is transformed with ID of Gender Dimension
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/calendar_pipeline.png)
+- subscription_pipeline: Extract and Load variables from the Subscription Type, Revenue, and Plan Duration columns of the dataset to the Subscription Dimension of the data warehouse.
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/subscription_pipeline.png)
+- user_pipeline: Extract User related information such as User ID, Join Date, Country, Age, Gender, Active Profiles, Household Profile Ind, Movies Watched, Series Watched to User Dimension. Also, Gender data is transformed with ID of Gender Dimension.
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/users_pipeline.png)
 
 ### Task 3
 What control measures could be deployed here to ensure the correctness of data? Do you notice something odd about the dataset provided?
