@@ -9,10 +9,11 @@ Start the Docker container in detached mode inside the project folder
 ```
  $ docker-compose up -d  
 ```
-Create a "netflix_dw" database and tables with queries inside the SQL folder. After creating the database and tables, some credentials which are dbname, user, password, host, and port should be saved. They should be used for creating connections in Admin panel in the Airflow menu
+Make a new database called 'netflix_dw' and create tables using queries located in the SQL folder. Once the database and tables are created, save credentials like dbname, user, password, host, and port. These credentials will be needed to establish connections in the Admin panel.
+Airflow menu
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/connection.png)
 
-We can run all DAGs after inserting the record and testing successfully List Connection. Just come to the DAGs section and you can run all pipelines now.
+After adding the record and confirming that the List Connection works, you can proceed to run all the DAGs. Simply go to the DAGs section and initiate all the pipelines with a single click.
 
 ## Tasks and solutions
 ### Task 1
