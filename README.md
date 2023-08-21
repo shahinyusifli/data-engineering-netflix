@@ -87,6 +87,7 @@ Result:
 
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/result_of_first_task.png)
 - b. The most popular packages per country.
+
 It can be defined with number of users.
 
  Query:
