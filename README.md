@@ -1,6 +1,6 @@
 # data-engineering-netflix
  I've developed a data engineering solution for Inbank's take-home task. I designed normalized data model for efficient data warehousing. In addition, I created ETL pipelines using Airflow to handle data flow into a PostgreSQL data warehouse. Furthermore, I formulated and executed SQL queries to fulfill the specific reporting requirements.
-## Run and Installation in local
+## Installation and Run in local
 Clone the repo from GitHub by running:
 ```
  $ git clone https://github.com/shahinyusifli/data-engineering-netflix.git
@@ -12,6 +12,8 @@ Start the Docker container in detached mode inside the project folder
 Create a "netflix_dw" database and create tables with queries inside the SQL folder. After creating the database and tables, some credentials which are dbname, user, password, host, and port should be defined. They should be used for creating connections in Admin panel in the Airflow menu
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/connection.png)
 
+We can run all DAGs after inserting the record and testing successfully List Connection. Just come to the DAGs section and you can run all pipelines now.
+
 ## Tasks and solutions
 ### Task 1
 Construct a normalized data model for the dataset provided.
@@ -21,6 +23,8 @@ I have created a normalized data model meeting the requirements of each normal f
 - There is not any violation of the 2NF(second normal form). All non-key attributes of columns have logical relation with the "User ID" key attribute.
 - According to the requirements of the 3NF(third normal form), there should not be any transient dependency between non-key attributes. But we can notice this dependency in the description section of columns in the task pdf. Especially, we can understand the transient dependency between the "Revenue" and "Subscription Type" columns with this statement "Monthly Revenue: Fee receivable for the given subscription type". It means "Revenue" depending on the User with the User's Subscription Type. In other words, we can describe it as {User ID} → {Subscription Type} → {Revenue}. For meeting the requirements of the third normal form, I have created a new table that consists of ID, Subscription, and Revenue columns. 
 - BCNF(Boyce Codd's normal form) can be beneficial for eliminating future data inconsistency problems. We can ensure the quality of queues by implementing a super key concept. I have created new tables for the Device, Country, and Gender columns. 
+
+
 After implementing these normal forms, I have to decide to implement data warehousing concepts because queries in Task 4 look like queries for the data analytics process. I have created relevant dimensions and fact tables considering all normal forms, final schema can be found below:
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/schema_netflix_dw.png)
 
@@ -158,4 +162,4 @@ GROUP BY
 ORDER BY
     cd.country, gd.gender, dd.device; 
 ```
-Result: Result can be find in "Results_of_query_3_and_4" folder 
+Result: Result can be find in "Results_of_query_4" folder 
