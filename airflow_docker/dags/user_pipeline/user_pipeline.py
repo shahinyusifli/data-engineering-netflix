@@ -45,7 +45,7 @@ def format_join_date():
 def format_genders():
     df = delete_outlier_age()
     cur = conn.cursor()
-    query = "select id, gender from genderdimension"
+    query = "select id, gender from gender_dimension"
     cur.execute(query)
     genders_dict = {row[1]: row[0] for row in cur.fetchall()}
     formated_gender = df['Gender'].map(genders_dict).tolist()
@@ -58,7 +58,7 @@ def load_users_to_dim():
     df.columns = df.columns.str.strip()
     cur = conn.cursor()
     for index, row in df.iterrows():
-        cur.execute("""INSERT INTO UserDimension (UserID, JoinDate, Age, ActiveProfiles, HouseholdProfileInd, MoviesWatched, SeriesWatched, Gender_ID) 
+        cur.execute("""INSERT INTO User_Dimension (ID, Join_Date, Age, Active_Profiles, Household_Profile_Ind, Movies_Watched, Series_Watched, Gender_ID) 
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""", 
                     (row['User ID'], row['Join Date'], row['Age'], row['Active Profiles'], row['Household Profile Ind'], row['Movies Watched'], row['Series Watched'], row['Gender_ID']))
     

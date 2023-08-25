@@ -50,11 +50,11 @@ def load_devices_to_dim():
     cur = conn.cursor()
 
     for device in unique_devices:
-        cur.execute("SELECT * FROM DeviceDimension WHERE device = %s", (device,))
+        cur.execute("SELECT * FROM Device_Dimension WHERE device = %s", (device,))
         existing_data = cur.fetchone()
 
         if existing_data is None:
-            cur.execute("INSERT INTO DeviceDimension (device) VALUES (%s)", (device,))
+            cur.execute("INSERT INTO Device_Dimension (device) VALUES (%s)", (device,))
     
     conn.commit()
     conn.close()

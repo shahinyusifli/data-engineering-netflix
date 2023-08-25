@@ -47,11 +47,11 @@ def load_subscriptions_to_dim():
                 plan_duration_int = int(plan_duration)
                 revenue_int = int(revenue)
                 
-                cur.execute("SELECT * FROM SubscriptionDimension WHERE subscription = %s and plan_duration = %s and revenue = %s", (subscription, plan_duration_int, revenue_int))
+                cur.execute("SELECT * FROM Subscription_Dimension WHERE subscription = %s and plan_duration = %s and revenue = %s", (subscription, plan_duration_int, revenue_int))
                 existing_data = cur.fetchone()
                 
                 if existing_data is None:
-                    cur.execute("INSERT INTO SubscriptionDimension (subscription, plan_duration, revenue) VALUES (%s, %s, %s)", (subscription, plan_duration_int, revenue_int))
+                    cur.execute("INSERT INTO Subscription_Dimension (subscription, plan_duration, revenue) VALUES (%s, %s, %s)", (subscription, plan_duration_int, revenue_int))
     
     conn.commit()
     conn.close()

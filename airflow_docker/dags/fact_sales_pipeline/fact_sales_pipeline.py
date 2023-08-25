@@ -88,7 +88,7 @@ def mapping_country():
 
     cur = conn.cursor()
 
-    query = "select id, country from countrydimension"
+    query = "select id, country from country_dimension"
     cur.execute(query)
     countries_dict = {row[1]: row[0] for row in cur.fetchall()}
     formated_country = df['Country'].map(countries_dict).tolist()
@@ -100,7 +100,7 @@ def mapping_device():
 
     cur = conn.cursor()
 
-    query = "select id, device from devicedimension"
+    query = "select id, device from device_dimension"
     cur.execute(query)
     devices_dict = {row[1]: row[0] for row in cur.fetchall()}
     formated_device = df['Device'].map(devices_dict).tolist()
@@ -125,7 +125,7 @@ def load_data_to_fact_table():
         device_exists = check_device_exists(row['device_id'])
 
         if subscription_exists and country_exists and device_exists:
-            cur.execute("""INSERT INTO SalesFact (UserID, SubscriptionID, Last_Payment_Date, Country_ID, Device_ID) 
+            cur.execute("""INSERT INTO Sales_Fact (User_ID, Subscription_ID, Last_Payment_Date, Country_ID, Device_ID) 
                         VALUES (%s, %s, %s, %s, %s)""",
                         (row['User ID'], row['subscriptionid'], row['last_payment_date'], row['country_id'], row['device_id'],))
 
@@ -135,21 +135,21 @@ def load_data_to_fact_table():
 
 def check_subscription_exists(subscription_id):
     cur = conn.cursor()
-    query = "SELECT COUNT(*) FROM SubscriptionDimension WHERE ID = %s"
+    query = "SELECT COUNT(*) FROM Subscription_Dimension WHERE ID = %s"
     cur.execute(query, (subscription_id,))
     count = cur.fetchone()[0]
     return count > 0
 
 def check_country_exists(country_id):
     cur = conn.cursor()
-    query = "SELECT COUNT(*) FROM CountryDimension WHERE ID = %s"
+    query = "SELECT COUNT(*) FROM Country_Dimension WHERE ID = %s"
     cur.execute(query, (country_id,))
     count = cur.fetchone()[0]
     return count > 0
 
 def check_device_exists(device_id):
     cur = conn.cursor()
-    query = "SELECT COUNT(*) FROM DeviceDimension WHERE ID = %s"
+    query = "SELECT COUNT(*) FROM Device_Dimension WHERE ID = %s"
     cur.execute(query, (device_id,))
     count = cur.fetchone()[0]
     return count > 0

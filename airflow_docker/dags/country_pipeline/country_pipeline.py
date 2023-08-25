@@ -51,11 +51,11 @@ def load_countries_to_dim():
     cur = conn.cursor()
 
     for country in unique_countries:
-        cur.execute("SELECT * FROM CountryDimension WHERE country = %s", (country,))
+        cur.execute("SELECT * FROM Country_Dimension WHERE country = %s", (country,))
         existing_data = cur.fetchone()
 
         if existing_data is None:
-            cur.execute("INSERT INTO CountryDimension (Country) VALUES (%s)", (country,))
+            cur.execute("INSERT INTO Country_Dimension (Country) VALUES (%s)", (country,))
     
     conn.commit()
     conn.close()

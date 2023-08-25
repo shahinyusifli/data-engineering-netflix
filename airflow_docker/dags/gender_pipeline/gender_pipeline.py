@@ -50,11 +50,11 @@ def load_genders_to_dim():
     cur = conn.cursor()
 
     for gender in unique_genders:
-        cur.execute("SELECT * FROM GenderDimension WHERE gender = %s", (gender,))
+        cur.execute("SELECT * FROM Gender_Dimension WHERE gender = %s", (gender,))
         existing_data = cur.fetchone()
 
         if existing_data is None:
-            cur.execute("INSERT INTO GenderDimension (gender) VALUES (%s)", (gender,))
+            cur.execute("INSERT INTO Gender_Dimension (gender) VALUES (%s)", (gender,))
     
     conn.commit()
     conn.close()
