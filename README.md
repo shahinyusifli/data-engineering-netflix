@@ -33,7 +33,8 @@ After implementing these normal forms, I have created 3 layers for data loading 
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/netflix_dw_bronze.png)
 
 In this way, I have created a silver layer for transforming data such as formatting date columns and eliminating rows according to age>110 condition. In the silver layer, transformation data according to quality checks, modeling raw data, and eliminating outlier data are aimed. 
-![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/netflix_dw_bronze.png)
+
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/netflix_dw_silver.png)
 
 Finally, the gold layer represents data that is suitable for future data analytics or data science projects. Selected multi-layer architecture is beneficial for fast responses to data linage issues.
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/schema_netflix_dw.png)
