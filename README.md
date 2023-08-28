@@ -28,6 +28,8 @@ I have created a normalized data model meeting the requirements of each normal f
 
 
 After implementing these normal forms, I have created 3 laeyers for data loading and transformation. In the first layer, bronze layer is created for storing raw data. It also represented as data lake. 
+
+
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/netflix_dw_bronze.png)
 
 On this way, I have created silver layer for transforming data such as formating date columns and eliminating rows according to age>110 condition. In the silver layer, transformation data according to quality checks, modeling raw data and eliminating outlier data is aimed. 
@@ -70,7 +72,6 @@ What control measures could be deployed here to ensure the correctness of data? 
 There are some control measures that can be used for the correctness of data
 - Control measure for "Plan Duration": As I mentioned "Plan Duration" can violate the first normal form. Therefore, it is transformed inside subscription_pipeline.
 - Control measure for "Ages": There are some outlined data such as 107 and 904 in the "Ages" column of the dataset. 107 can be acceptable but 904 is not. Therefore, rows are deleted if the age is more than 110. This transformation is done in user_pipeline and fact_sales_pipeline.
-- Control measure for pipelines: I have applied detecting anomalies in some dimension tables which can be checked with predefined values in JSON files. It can help detect outliers in categorical data.
 
 There is some anomaly in the dataset. I think each type of subscription should have a constant Revenue values but range of Revenue values are listed from 10 to 15 for each subscription. It may happen during the generation of data.
 
