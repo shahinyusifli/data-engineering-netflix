@@ -27,7 +27,7 @@ I have created a normalized data model meeting the requirements of each normal f
 - BCNF(Boyce Codd's normal form) can be beneficial for eliminating future data inconsistency problems. We can ensure the quality of queries by implementing a super key concept. I have created a Device table for this purpose.
 
 
-After implementing these normal forms, I have created 3 layers for data loading and transformation. In the first layer, the bronze layer is created for storing raw data. It is also represented as a data lake. 
+After defining these normal forms, I have created 3 layers for data loading and transformation. In the first layer, the bronze layer is created for storing raw data. It is also represented as a data lake. 
 
 
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/netflix_dw_bronze.png)
@@ -36,7 +36,7 @@ In this way, I have created a silver layer for transforming data such as formatt
 
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/netflix_dw_silver.png)
 
-Finally, the gold layer represents data that is suitable for future data analytics or data science projects. Selected multi-layer architecture is beneficial for fast responses to data linage issues.
+Finally, the gold layer represents data that is suitable for future data analytics or data science projects. Selected multi-layer architecture is beneficial for fast responses to data lineage issues with implementing metadata techniques. These techniques can be practiced in Snowflake by tracking data changes with different types of streams and their metadata properties. 
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/schema_netflix_dw.png)
 
 
