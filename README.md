@@ -24,11 +24,16 @@ I have created a normalized data model meeting the requirements of each normal f
 - I would like to start the 1NF(first normal form). There are not any row order to convey information and we can not see repeated groups. Also, we had a unique primary key. But we can see there is some violation of mixing data types within the "Plan Duration" column which saves "1 Month" data and "1" and "Month" belong to integer and string or char datatypes respectively. Therefore, I prefer to transform this data and eliminate the "Month" value, we can represent years and months with just numbers. 
 - There is not any violation of the 2NF(second normal form). All non-key attributes of columns have logical relation with the "User ID" key attribute.
 - According to the requirements of the 3NF(third normal form), there should not be any transient dependency between non-key attributes. But we can notice this dependency in the description section of columns in the task pdf. Especially, we can understand the transient dependency between the "Revenue" and "Subscription Type" columns with this statement "Monthly Revenue: Fee receivable for the given subscription type". It means "Revenue" depending on the User with the User's Subscription Type. In other words, we can describe it as {User ID} → {Subscription Type} → {Revenue}. For meeting the requirements of the third normal form, I have created a new table that consists of ID, Subscription, Plan_Duration, and Revenue columns. 
-- BCNF(Boyce Codd's normal form) can be beneficial for eliminating future data inconsistency problems. We can ensure the quality of queries by implementing a super key concept. I have created new tables for the Device, Country, and Gender columns for this purpose. 
+- BCNF(Boyce Codd's normal form) can be beneficial for eliminating future data inconsistency problems. We can ensure the quality of queries by implementing a super key concept. I have created Device table for this purpose.
 
 
-After implementing these normal forms, I have to decide to implement data warehousing concepts because queries in Task 4 look like queries for the data analytics process. Therefore, I have created relevant dimensions and fact tables considering all normal forms. Also, final schema can be found below:
+After implementing these normal forms, I have created 3 laeyers for data loading and transformation. In the first layer, bronze layer is created for storing raw data. It also represented as data lake. 
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/netflix_dw_bronze.png)
 
+On this way, I have created silver layer for transforming data such as formating date columns and eliminating rows according to age>110 condition. In the silver layer, transformation data according to quality checks, modeling raw data and eliminating outlier data is aimed. 
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/netflix_dw_bronze.png)
+
+Finaly, the last golden layer represent data which is suitable for future data analtics or data science projects. Selected multi layer architecture is benefical for fast responsing data linage issues.
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/schema_netflix_dw.png)
 
 
@@ -37,20 +42,27 @@ Load the data into the data model you constructed and into DB engines like MySQL
 
 ### Solution
 I have selected PostgreSQL, Airflow, and Python to accomplish this task. PostgreSQL was selected because it has strong performance in selecting big amounts of data which is the most critical for data warehouses. Also, I have selected Airflow because I can achieve repeatable loading by using the advantages of Python. I can achieve repeatable loading on a regular basis with start_date and schedule_interval of DAG properties which we can define to execute pipelines in monthly, weekly, daily, etc time intervals. In total, I have created 7 ETL pipelines. I would like to give a short description for each of them.
-- country_pipeline: Extract and Load unique variables from the Country column of the dataset to the Country Dimension of the data warehouse. Also, there is an anomaly detection with compares incoming values with values in a predefined JSON file.
-![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/country_pipeline.png)
-- device_pipeline: Extract and Load unique variables from the Device column of the dataset to the Device Dimension of the data warehouse. We can see the task in the middle which serves to detect new or outlined data.
-![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/device_pipeline.png)
-- fact_sales_pipeline: Extract, Transform, and Load data from User_ID, Subscription Type, Country, Device, and Last Payment Date column of the dataset to the Sales Fact table. Also, all columns are mapped to foreign keys. In the load task, the existing of subscription, country, and device mapped values are checked. We had a formatting task that convert incoming date values to the recommended date format of PostgreSQL.
+
+- first(bronze) layer pipeline: Extract raw data from csv file.
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/bronze_pipeline.png)
+
+- second(silver) layer pipeline: In this pipeline, some transformations are done such as formating date data and eliminating outliers. Aslo, data modeling is done with spliting different types in same column. 
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/silver_pipeline.png)
+
+- fact sales pipeline: Some values such as subscription types and devices are mapped. And User Defined Functions are used in PostgreSQl for this purpose. All functions belong to golden layer or schema and can be found inside DDL folder.
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/sales_fact_table_pipeline.png)
-- gender_pipeline: Extract and Load gender variables from the Gender column of the dataset to the Gender Dimension of the data warehouse. We can see there is anomaly detection task before loading values to data warehouse which check incoming values with values in JSON file.
-![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/genders_pipeline.png)
-- populate_time_dimension: This pipeline consists of one task which is responsible for generating a calendar table in 2 years range. Also, common table expression (CTE) is used to define the start and end dates for this range.
+
+- populate date dimension: This pipeline consists of one task which is responsible for generating a calendar table in 2 years range. Also, common table expression (CTE) is used to define the start and end dates for this range.
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/calendar_pipeline.png)
-- subscription_pipeline: Extract and Load variables from the Subscription Type, Revenue, and Plan Duration columns of the dataset to the Subscription Dimension of the data warehouse. The objective is to create a comprehensive table displaying all potential combinations of Revenue and Subscription, derived from the dataset, to facilitate analysis of transient dependencies as outlined in the column explanations
+
+- subscription pipeline: Extract and Load variables from the Subscription Type, Revenue, and Plan Duration columns of netflix table of the silver layer table to the Subscription Dimension of the golder layer. 
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/subscription_pipeline.png)
-- user_pipeline: Extract User related information such as User ID, Join Date, Age, Gender, Active Profiles, Household Profile Ind, Movies Watched, Series Watched to User Dimension. Also, Gender data is transformed with ID of Gender Dimension.
+
+- account pipeline: Load user senstive PII data from silver layer table to account dimention of golder layer. We can find loading transformed user id, join date, age, gender, and country data to target dimension.
 ![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/users_pipeline.png)
+
+- device pipeline: Load mapped and transformed device values from silver layer table to target dimension.
+![alt text](https://github.com/shahinyusifli/data-engineering-netflix/blob/main/Images/device_pipeline.png)
 
 ### Task 3
 What control measures could be deployed here to ensure the correctness of data? Do you notice something odd about the dataset provided?
@@ -69,16 +81,16 @@ Write queries for answering the following questions:
  Query:
  ```sql
 SELECT
-    cd.country "Country",
-    SUM(sd.revenue) "Profit"
+    gda.country AS "Country",
+    SUM(gds.revenue) AS "Profit"
 FROM
-    public.country_dimension cd
+    gold.dim_account gda
 JOIN
-    public.sales_fact sf ON cd.id = sf.country_id
+    gold.fct_sales gfs ON gda.id = gfs.account_id
 JOIN
-    public.subscription_dimension sd ON sf.subscription_id = sd.id
+    gold.dim_subscription gds ON gfs.subscription_id = gds.id
 GROUP BY
-    cd.country
+    gda.country
 ORDER BY
     "Profit" DESC
 limit 1;
@@ -92,30 +104,38 @@ It can be defined with number of users.
 
  Query:
  ``` sql
- WITH SubscriptionRevenue AS (
+ WITH SubscriptionCounts AS (
     SELECT
-        sf.country_id,
-        sd.subscription AS "Subscription type",
-        COUNT(sf.user_id) AS "Number of users"
+        da.country,
+        ds.subscription_type AS "Subscription type",
+        COUNT(fs.account_id) AS "Number of users"
     FROM
-        public.sales_fact sf
+        gold.fct_sales fs
     JOIN
-        public.subscription_dimension sd ON sf.subscription_id = sd.id
+        gold.dim_subscription ds ON fs.subscription_id = ds.id
+    JOIN
+        gold.dim_account da ON fs.account_id = da.id
     GROUP BY
-        sf.country_id, sd.subscription
+        da.country, ds.subscription_type
+),
+RankedSubscriptions AS (
+    SELECT
+        country,
+        "Subscription type",
+        "Number of users",
+        ROW_NUMBER() OVER (PARTITION BY country ORDER BY "Number of users" DESC) AS rn
+    FROM
+        SubscriptionCounts
 )
 SELECT
-    cd.country,
-    sr."Subscription type",
-    sr."Number of users"
+    country,
+    "Subscription type",
+    "Number of users"
 FROM
-    public.country_dimension cd
-JOIN
-    SubscriptionRevenue sr ON cd.id = sr.country_id
+    RankedSubscriptions
 WHERE
-    sr."Number of users" = (
-        SELECT MAX("Number of users") FROM SubscriptionRevenue WHERE country_id = sr.country_id
-    );
+    rn = 1;
+
 ```
 Result: 
 
@@ -124,23 +144,21 @@ Result:
 
 This involves examining profits generated by multiple households linked to a single contract. For two selected households, their profits could be doubled to if we change policy to sharing user. We can see result with this SQL query:
  ``` sql
- SELECT
-    cd.country as "Country",
-    SUM(CASE WHEN ud.household_profile_ind >= 1 THEN sd.revenue ELSE 0 END) as "Proift of more than 1 household" ,
-    SUM(CASE WHEN ud.household_profile_ind = 1 THEN sd.revenue ELSE 0 END) as "Proift of 1 household",
-     SUM(CASE WHEN ud.household_profile_ind >= 1 THEN sd.revenue ELSE 0 END) * 2 as "Earnable profit"
+SELECT
+    da.country as "Country",
+    SUM(CASE WHEN fs.household_profile_ind >= 1 THEN ds.revenue ELSE 0 END) as "Profit of more than 1 household",
+    SUM(CASE WHEN fs.household_profile_ind = 1 THEN ds.revenue ELSE 0 END) as "Profit of 1 household",
+    SUM(CASE WHEN fs.household_profile_ind >= 1 THEN ds.revenue ELSE 0 END) * 2 as "Earnable profit"
 FROM
-    public.sales_fact sf
+    gold.fct_sales fs
 JOIN
-    public.country_dimension cd ON sf.country_id = cd.id
+    gold.dim_account da ON fs.account_id = da.id
 JOIN
-    public.user_dimension ud ON sf.user_id = ud.id
-JOIN
-    public.subscription_dimension sd ON sf.subscription_id  = sd.id
+    gold.dim_subscription ds ON fs.subscription_id = ds.id
 GROUP BY
-    cd.country
-ORDER by "Earnable profit" desc  
-limit 1;
+    da.country
+ORDER BY "Earnable profit" DESC
+LIMIT 1;
  ```
  Result:
 
@@ -150,24 +168,21 @@ limit 1;
  Query:
 ``` sql
 SELECT
-    cd.country "Country",
-    gd.gender "Gender",
-    dd.device "Device",
-    sum(ud.movies_watched) "Number of watched movies",
-    sum(ud.series_watched) "Number of watched series"
+    acc.country as "Country",
+    acc.gender as "Gender",
+    dd.device as "Device",
+    SUM(fs.movies_watched) as "Number of watched movies",
+    SUM(fs.series_watched) as "Number of watched series"
 FROM
-    public.country_dimension cd
+    gold.dim_account acc
 JOIN
-    public.sales_fact sf ON cd.id = sf.country_id
+    gold.fct_sales fs ON acc.id = fs.account_id
 JOIN
-    public.user_dimension ud ON sf.user_id = ud.id
-JOIN
-    public.gender_dimension gd ON ud.gender_id = gd.id
-JOIN
-    public.device_dimension dd ON sf.device_id = dd.id
+    gold.dim_device dd ON fs.device_id = dd.id
 GROUP BY
-    cd.country, gd.gender, dd.device
+    acc.country, acc.gender, dd.device
 ORDER BY
-    cd.country, gd.gender, dd.device; 
+    acc.country, acc.gender, dd.device;
+ 
 ```
 Result: Result can be find in "Results_of_query_4" folder 
