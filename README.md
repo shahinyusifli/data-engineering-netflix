@@ -1,5 +1,5 @@
 # data-engineering-netflix
- I've developed a data engineering solution for Inbank's take-home task. I designed a normalized data model and multi-layer architecture for efficient data warehousing. In addition, I created ELT pipelines using Airflow, Python, and PostgreSQL to handle data flows into a PostgreSQL data warehouse layers. Furthermore, I formulated and executed SQL queries to fulfill the specific reporting requirements. All SQL queries and User Defined Functions can be found under the DDL folder.
+ I've developed a data engineering solution for netflix row data. I designed a normalized data model and multi-layer architecture for efficient data warehousing. In addition, I created ELT pipelines using Airflow, Python, and PostgreSQL to handle data flows into a PostgreSQL data warehouse layers. Furthermore, I formulated and executed SQL queries to fulfill the specific reporting requirements. All SQL queries and User Defined Functions can be found under the DDL folder.
 ## Installation and Run in Local
 Clone the repo from GitHub by running:
 ```
