@@ -22,53 +22,48 @@ conn = psycopg2.connect(**conn_params)
 default_args = {
     'owner': 'shahin',
     'depends_on_past': False,
-    'start_date': datetime(2023, 8, 16),
+    'start_date': datetime(2023, 8, 15),
     'schedule_interval': '@once',
-    'retries': 1,
-    'retry_delay': timedelta(minutes=5),
+    'retries': 1
 }
 
 # Define the DAG
-dag = DAG(
+with DAG(
     'populate_time_dimension',
     default_args=default_args,
-    schedule_interval=timedelta(days=1),
     catchup=False 
-)
+):
 
-def populate_time_dimension():
-    cur = conn.cursor()
+    def populate_time_dimension():
+        cur = conn.cursor()
+
+        query = """-- Generate a series of dates from 2021-01-01 to 2024-12-31
+            INSERT INTO gold.dim_date (ID, Day, Month, Month_Name, Year, Quarter, Weekday, Day_Of_Week_Name, Is_Weekend)
+            SELECT 
+            d::DATE AS ID,
+            EXTRACT(DAY FROM d) AS Day,
+            EXTRACT(MONTH FROM d) AS Month,
+            TO_CHAR(d, 'Month') AS Month_Name,
+            EXTRACT(YEAR FROM d) AS Year,
+            EXTRACT(QUARTER FROM d) AS Quarter,
+            EXTRACT(ISODOW FROM d) AS Weekday,
+            TO_CHAR(d, 'Day') AS Day_Of_Week_Name,
+            CASE WHEN EXTRACT(ISODOW FROM d) IN (6, 7) THEN TRUE ELSE FALSE END AS Is_Weekend
+        FROM generate_series(
+            '2021-01-01'::DATE,
+            '2024-12-31'::DATE,
+            interval '1 day') AS d;"""
     
-    query = """-- Generate a series of dates from 2021-01-01 to 2024-12-31
-INSERT INTO gold.dim_date (ID, Day, Month, Month_Name, Year, Quarter, Weekday, Day_Of_Week_Name, Is_Weekend)
-SELECT 
-    d::DATE AS ID,
-    EXTRACT(DAY FROM d) AS Day,
-    EXTRACT(MONTH FROM d) AS Month,
-    TO_CHAR(d, 'Month') AS Month_Name,
-    EXTRACT(YEAR FROM d) AS Year,
-    EXTRACT(QUARTER FROM d) AS Quarter,
-    EXTRACT(ISODOW FROM d) AS Weekday,
-    TO_CHAR(d, 'Day') AS Day_Of_Week_Name,
-    CASE WHEN EXTRACT(ISODOW FROM d) IN (6, 7) THEN TRUE ELSE FALSE END AS Is_Weekend
-FROM generate_series(
-    '2021-01-01'::DATE,
-    '2024-12-31'::DATE,
-    interval '1 day') AS d;
-    """
-    
-    cur.execute(query)
-    conn.commit()
-    cur.close()
-    conn.close()
+        cur.execute(query)
+        conn.commit()
+        cur.close()
+        conn.close()
 
 
-populate_time_dimension_task = PythonOperator(
+    populate_time_dimension_task = PythonOperator(
     task_id='populate_time_dimension',
-    python_callable=populate_time_dimension,
-    dag=dag
-)
+    python_callable=populate_time_dimension,)
 
 
-populate_time_dimension_task
+    populate_time_dimension_task
 
