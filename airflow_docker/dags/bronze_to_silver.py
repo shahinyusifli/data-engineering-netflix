@@ -10,13 +10,12 @@ default_args = {
     'owner': 'shahin',
     'depends_on_past': False,
     'start_date': datetime(2023, 8, 15),
-    'schedule_interval': '@daily',
+    'schedule_interval': '15 0 * * *',
     'retries': 1
 }
 
 conn_id = 'postgres_localhost'
 conn = BaseHook.get_connection(conn_id) 
-
 
 with DAG(
     'bronze_to_silver',
@@ -66,9 +65,11 @@ with DAG(
     )
 
 
-    ExternalTaskSensor(
+    wait_for_main_etl = ExternalTaskSensor(
         task_id='triger_bronze_to_silver',
         external_dag_id='import_csv_to_postgres',
         external_task_id='upsert_csv_to_postgres_task',
-        execution_delta = timedelta(minutes=10),
-        timeout=600)>>bronze_to_silver >> clean_outlier_with_age 
+        execution_delta = timedelta(minutes=5),
+        timeout=600)
+    
+    bronze_to_silver >> clean_outlier_with_age 

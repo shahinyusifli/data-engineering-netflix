@@ -4,8 +4,7 @@ from airflow import DAG
 from airflow.hooks.base_hook import BaseHook
 from airflow.operators.python_operator import PythonOperator
 from airflow.sensors.python import PythonSensor
-import datetime
-from datetime import timedelta
+from datetime import datetime
 import os
 
 # PostgreSQL Connection
@@ -15,7 +14,7 @@ default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'start_date': datetime(2023, 8, 15),
-    'schedule_interval': '@daily',
+    'schedule_interval': '10 0 * * *',
     'retries': 1,
 }
 csv_filepath = '/opt/airflow/dags/Netflix_dataset.csv'
@@ -85,4 +84,4 @@ with DAG(
     )   
 
     
-    check_file_exist_in_path >> upsert_task
+    check_file_exist_in_path >> upsert_task 

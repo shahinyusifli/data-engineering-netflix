@@ -8,7 +8,7 @@ default_args = {
     'owner': 'shahin',
     'depends_on_past': False,
     'start_date': datetime(2023, 8, 15),
-    'schedule_interval': '@monthly',
+    'schedule_interval': '25 0 * * *',
     'retries': 1
 }
 
