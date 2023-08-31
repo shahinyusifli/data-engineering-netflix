@@ -82,20 +82,23 @@ Write queries for answering the following questions:
 
  Query:
  ```sql
-SELECT
-    gda.country AS "Country",
-    SUM(gds.revenue) AS "Profit"
+WITH profits_country AS (select
+	country,
+  SUM(gds.revenue) OVER (PARTITION BY gda.country) AS "Profit"
 FROM
-    gold.dim_account gda
+   gold.dim_account gda
 JOIN
-    gold.fct_sales gfs ON gda.id = gfs.account_id
+   gold.fct_sales gfs ON gda.id = gfs.account_id
 JOIN
-    gold.dim_subscription gds ON gfs.subscription_id = gds.id
-GROUP BY
-    gda.country
-ORDER BY
-    "Profit" DESC
-limit 1;
+   gold.dim_subscription gds ON gfs.subscription_id = gds.id ),
+top_countries AS (SELECT 
+	country, 
+	"Profit",
+	row_number () OVER (ORDER BY "Profit" DESC) AS "Row number"
+FROM 
+	profits_country)
+	
+SELECT country AS "Country", "Profit"  FROM top_countries WHERE "Row number" = 1;
 ```
 Result:
 
