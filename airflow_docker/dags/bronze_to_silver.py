@@ -65,11 +65,11 @@ with DAG(
     )
 
 
-    wait_for_main_etl = ExternalTaskSensor(
-        task_id='triger_bronze_to_silver',
-        external_dag_id='import_csv_to_postgres',
-        external_task_id='upsert_csv_to_postgres_task',
-        execution_delta = timedelta(minutes=5),
-        timeout=600)
+    # wait_for_main_etl = ExternalTaskSensor(
+    #     task_id='triger_bronze_to_silver',
+    #     external_dag_id='import_csv_to_postgres',
+    #     external_task_id='upsert_csv_to_postgres_task',
+    #     execution_delta = timedelta(minutes=5),
+    #     timeout=600)
     
     bronze_to_silver >> clean_outlier_with_age 
