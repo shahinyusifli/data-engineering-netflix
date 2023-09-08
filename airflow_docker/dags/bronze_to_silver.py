@@ -3,8 +3,8 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from datetime import datetime
 from airflow.hooks.base_hook import BaseHook
-from airflow.sensors.external_task_sensor import ExternalTaskSensor
-from datetime import datetime, timedelta
+from datetime import datetime
+from airflow.providers.common.sql.operators.sql import SQLColumnCheckOperator
 
 default_args = {
     'owner': 'shahin',
@@ -47,10 +47,6 @@ with DAG(
         values (bnf.user_id, bnf.subscription_type, bnf.monthly_revenue, TO_CHAR(TO_DATE(bnf.join_date, 'DD.MM.YYYY'), 'YYYY-MM-DD')::DATE, TO_CHAR(TO_DATE(bnf.last_payment_date, 'DD.MM.YYYY'), 'YYYY-MM-DD')::DATE, bnf.country, bnf.age, bnf.gender, bnf.device, CAST(SPLIT_PART(bnf.plan_duration, ' ', 1) AS INTEGER), bnf.active_profiles, bnf.household_profile_ind, bnf.movies_watched, bnf.series_watched);
             """
 
-    delete_outlier_query = """ 
-        DELETE FROM silver.netflix
-        WHERE age > 110; """
-
 
     bronze_to_silver = PostgresOperator(
         task_id='bronze_to_silver',
@@ -58,18 +54,6 @@ with DAG(
         postgres_conn_id=conn_id 
     )
 
-    clean_outlier_with_age = PostgresOperator(
-        task_id='clean_outlier_with_age',
-        sql=delete_outlier_query,
-        postgres_conn_id=conn_id 
-    )
-
-
-    # wait_for_main_etl = ExternalTaskSensor(
-    #     task_id='triger_bronze_to_silver',
-    #     external_dag_id='import_csv_to_postgres',
-    #     external_task_id='upsert_csv_to_postgres_task',
-    #     execution_delta = timedelta(minutes=5),
-    #     timeout=600)
     
-    bronze_to_silver >> clean_outlier_with_age 
+
+    bronze_to_silver
