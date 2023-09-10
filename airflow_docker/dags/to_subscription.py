@@ -3,6 +3,7 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from datetime import datetime
 from airflow.hooks.base_hook import BaseHook
+from airflow.providers.common.sql.operators.sql import SQLColumnCheckOperator
 
 
 default_args = {
@@ -39,11 +40,31 @@ with DAG(
         AND ev.plan_duration = sd.plan_duration
     WHERE sd.subscription_type IS NULL; """
 
-
+    column_checks = SQLColumnCheckOperator(
+        task_id="column_checks",
+        conn_id=conn_id,
+        table="gold.dim_subscription",
+        column_mapping={
+            "subscription_type": {
+                "null_check": {"equal_to": 0},
+                "distinct_check": {"equal_to": 3},
+                "unique_check": {"equal_to": 3} 
+            },
+            "plan_duration": {
+                "null_check": {"equal_to": 0},
+                "distinct_check": {"equal_to": 1},
+                "unique_check": {"equal_to": 1},
+                "min": {"geq_to": 1} 
+            },
+            "revenue": {
+                "null_check": {"equal_to": 0},
+            }
+        }
+    )
 
     to_dim_subscription = PostgresOperator(
         task_id='to_dim_subscription',
         sql=to_dim_subscription_query,
         postgres_conn_id=conn_id)
 
-    to_dim_subscription
+    to_dim_subscription >> column_checks 

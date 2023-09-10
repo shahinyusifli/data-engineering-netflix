@@ -3,6 +3,7 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from datetime import datetime
 from airflow.hooks.base_hook import BaseHook
+from airflow.providers.common.sql.operators.sql import SQLColumnCheckOperator
 
 default_args = {
     'owner': 'shahin',
@@ -35,4 +36,17 @@ with DAG(
         postgres_conn_id=conn_id 
     )
 
-    to_dim_device
+    column_checks = SQLColumnCheckOperator(
+        task_id="column_checks",
+        conn_id=conn_id,
+        table="gold.dim_device",
+        column_mapping={
+            "device": {
+                "null_check": {"equal_to": 0},
+                "distinct_check": {"equal_to": 4},
+                "unique_check": {"equal_to": 4} 
+            }
+        }
+    )
+
+    to_dim_device >> column_checks

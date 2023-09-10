@@ -3,6 +3,7 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from datetime import datetime
 from airflow.hooks.base_hook import BaseHook
+from airflow.providers.common.sql.operators.sql import SQLColumnCheckOperator
 
 default_args = {
     'owner': 'shahin',
@@ -44,6 +45,41 @@ with DAG(
     to_fct_sales = PostgresOperator(
         task_id='to_fct_sales',
         sql=to_fct_sales_query,
-        postgres_conn_id=conn_id)
+        postgres_conn_id=conn_id
+    )
+    
+    column_checks = SQLColumnCheckOperator(
+        task_id="column_checks",
+        conn_id=conn_id,
+        table="gold.fct_sales",
+        column_mapping={
+            "account_id": {
+                "null_check": {"equal_to": 0} 
+            },
+             "subscription_id": {
+                "null_check": {"equal_to": 0},
+                "unique_check": {"equal_to": 18}
+            },
+             "last_payment_date": {
+                "null_check": {"equal_to": 0} 
+            },
+             "device_id": {
+                "null_check": {"equal_to": 0},
+                "unique_check": {"equal_to": 4} 
+            },
+             "active_profiles": {
+                "null_check": {"equal_to": 0} 
+            },
+             "household_profile_ind": {
+                "null_check": {"equal_to": 0} 
+            },
+             "movies_watched": {
+                "null_check": {"equal_to": 0} 
+            },
+             "series": {
+                "null_check": {"equal_to": 0} 
+            }
+        }
+    )
 
-    to_fct_sales
+    to_fct_sales >> column_checks 

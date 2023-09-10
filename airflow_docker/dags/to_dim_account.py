@@ -3,6 +3,7 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from datetime import datetime
 from airflow.hooks.base_hook import BaseHook
+from airflow.providers.common.sql.operators.sql import SQLColumnCheckOperator
 
 default_args = {
     'owner': 'shahin',
@@ -43,4 +44,25 @@ with DAG(
         postgres_conn_id=conn_id,  
     )
 
-    to_dim_account
+    column_checks = SQLColumnCheckOperator(
+        task_id="column_checks",
+        conn_id=conn_id,
+        table="gold.dim_account",
+        column_mapping={
+            "join_date": {
+                "null_check": {"equal_to": 0} 
+            },
+            "age": {
+                "null_check": {"equal_to": 0},
+                "max": {"leq_to": 110}
+            },
+            "gender": {
+                "null_check": {"equal_to": 0}
+            },
+            "country": {
+                "null_check": {"equal_to": 0}
+            }
+        }
+    )
+
+    to_dim_account >> column_checks
