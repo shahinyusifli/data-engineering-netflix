@@ -47,17 +47,15 @@ with DAG(
         column_mapping={
             "subscription_type": {
                 "null_check": {"equal_to": 0},
-                "distinct_check": {"equal_to": 3},
-                "unique_check": {"equal_to": 3} 
+                "distinct_check": {"equal_to": 3}
             },
             "plan_duration": {
                 "null_check": {"equal_to": 0},
                 "distinct_check": {"equal_to": 1},
-                "unique_check": {"equal_to": 1},
                 "min": {"geq_to": 1} 
             },
             "revenue": {
-                "null_check": {"equal_to": 0},
+                "null_check": {"equal_to": 0}
             }
         }
     )

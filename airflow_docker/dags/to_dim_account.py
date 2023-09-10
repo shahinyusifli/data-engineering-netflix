@@ -54,7 +54,7 @@ with DAG(
             },
             "age": {
                 "null_check": {"equal_to": 0},
-                "max": {"leq_to": 110}
+                "max": {"geq_to": 110}
             },
             "gender": {
                 "null_check": {"equal_to": 0}

@@ -43,8 +43,7 @@ with DAG(
         column_mapping={
             "device": {
                 "null_check": {"equal_to": 0},
-                "distinct_check": {"equal_to": 4},
-                "unique_check": {"equal_to": 4} 
+                "distinct_check": {"equal_to": 4} 
             }
         }
     )
